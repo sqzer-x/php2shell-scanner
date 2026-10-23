@@ -1,0 +1,5 @@
+# Files that run directly on the server keep LF line endings, even when committed from Windows.
+* text=auto eol=lf
+
+# Fonts are binary: never convert their line endings.
+*.woff2 binary

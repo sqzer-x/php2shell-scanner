@@ -1,0 +1,126 @@
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Fetch distribution security data again every 6 hours.
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run at a time, including its data commit. A newer run waits; it is never cancelled midway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+# The site is built, tested and deployed from exactly the commit this run checked out, plus
+# freshly fetched data. Recording that data in git is a separate, last job: it never pulls new
+# code into the build, and a rejected push can never hold back a deploy.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      data_changed: ${{ steps.data.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The same command as ci.yml.
+      - name: Test
+        run: npm test
+
+      # If the fixed versions in the official advisories differ from upstream.json, fail here and do not deploy.
+      - name: Update distro data
+        id: data
+        run: |
+          node tools/update-distro-data.mjs
+          if git diff --quiet -- site/data/distro.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assemble site
+        run: node tools/build-site.mjs
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Keep the new distro.json for the data commit
+        if: steps.data.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: distro-data
+          path: site/data/distro.json
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Commit the data that is now live to main, so the history of distro.json is the history of
+  # the deployed data, and the next run starts from it. Runs only after a successful deploy.
+  commit-data:
+    needs: [build, deploy]
+    if: needs.build.outputs.data_changed == 'true' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # The latest main, not this run's commit: main may have moved on while this run waited or ran.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: distro-data
+          path: ${{ runner.temp }}/distro-data
+
+      - name: Commit distro.json
+        env:
+          NEW_DATA: ${{ runner.temp }}/distro-data/distro.json
+        run: |
+          # Compare without updated_at, so a main that already holds the same data is left alone.
+          strip() { jq -S 'del(.updated_at)' "$1"; }
+          if [ -f site/data/distro.json ] && [ "$(strip "$NEW_DATA")" = "$(strip site/data/distro.json)" ]; then
+            echo "main already has this data"
+            exit 0
+          fi
+          cp "$NEW_DATA" site/data/distro.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/distro.json
+          git commit -m "data: update distro advisories"
+          # No pull and no retry: if main moved on again, or a rule on main blocks pushes from
+          # workflows, the deployed site is still current and the next run fetches and commits again.
+          if ! git push origin HEAD:main; then
+            echo "::warning title=Data commit not pushed::The new distro.json is deployed but was not pushed to main. The next run fetches the data again and retries. If a ruleset or branch protection on main blocks pushes from workflows, see the README section on self-hosting."
+          fi

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <title>PHP2Shell exposure check · CVE-2026-109618, CVE-2026-109619</title>
+  <meta name="description" content="Decide whether a server's PHP is affected by PHP2Shell (CVE-2026-109618, CVE-2026-109619) from facts collected on the server. Handles distribution backports, missed restarts and interim mitigations. Runs in your browser.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PHP2Shell exposure check">
+  <meta property="og:description" content="CVE-2026-109618 and CVE-2026-109619, checked from inside the server. Backports, missed restarts and interim mitigations included.">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="alternate" hreflang="ko" href="kr/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/pretendard.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#input">Skip to input</a>
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#000"/><path d="M11 24V8h5.5a4.5 4.5 0 0 1 0 9H11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>php2shell-scanner</span>
+      </a>
+      <nav class="cves" aria-label="Advisories">
+        <a href="https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w" rel="noreferrer">CVE-2026-109618</a>
+        <a href="https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp" rel="noreferrer">CVE-2026-109619</a>
+      </nav>
+      <div class="topbar-end">
+        <a class="lang-toggle" href="kr/" hreflang="ko" lang="ko" aria-label="한국어로 보기" title="한국어로 보기">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+          <span>KR</span>
+        </a>
+        <a class="report-link" href="https://sqzer.com/writing/2026/php2shell-cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener" aria-label="View report" title="Opens the write-up on sqzer.com in a new tab"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><span>View report</span></a>
+        <a class="source" id="repo-link" href="https://github.com/sqzer-x/php2shell-scanner" aria-label="Source on GitHub" title="Source on GitHub">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="pane" aria-labelledby="title">
+      <h1 id="title">PHP2Shell exposure check</h1>
+      <p class="lede">Decides whether a server's PHP is affected by CVE-2026-109618 and CVE-2026-109619 from facts collected on the server itself, including distribution backports, missed restarts and interim mitigations. The verdict is computed in this tab; what you paste is not sent anywhere.</p>
+
+      <div class="step">
+        <h2 class="step-head"><span class="step-n">1</span>Collect</h2>
+        <div class="collector">
+          <div class="tabs" role="tablist" aria-label="Collection method">
+            <button class="tab" type="button" role="tab" id="tab-probe" aria-controls="panel-probe" aria-selected="true">PHP probe <span class="tab-hint">recommended</span></button>
+            <button class="tab" type="button" role="tab" id="tab-script" aria-controls="panel-script" aria-selected="false" tabindex="-1">Server script</button>
+            <button class="tab" type="button" role="tab" id="tab-header" aria-controls="panel-header" aria-selected="false" tabindex="-1">Response header</button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-probe" aria-labelledby="tab-probe">
+            <h3 class="panel-title">PHP probe</h3>
+            <div class="get">
+              <a class="btn btn-download" href="downloads/php2shell-selfcheck.php" download aria-label="Download php2shell-selfcheck.php" title="Download"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>php2shell-selfcheck.php</a>
+            </div>
+            <p class="or">or fetch it on the server</p>
+            <div class="cmdline"><code class="cmd" data-download="php2shell-selfcheck.php">curl -fsSLO https://sqzer-x.github.io/php2shell-scanner/downloads/php2shell-selfcheck.php</code><button class="copy" type="button" aria-label="Copy command"><svg class="i-copy" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+            <p class="sha" data-sha-for="php2shell-selfcheck.php"></p>
+            <ol class="howto">
+              <li>Set <code>$TOKEN</code> in the file to 12 or more random letters, digits, <code>-</code> or <code>_</code>, for example the output of <code>openssl rand -hex 16</code>.</li>
+              <li>Give the file an unguessable name and upload it to the site's web root.</li>
+              <li>Open <code>https://&lt;site&gt;/&lt;file&gt;.php?k=&lt;TOKEN&gt;</code> once. The file then tries to delete itself and says so if it cannot.</li>
+              <li>Repeat per vhost and per PHP-FPM pool; each may run a different PHP.</li>
+            </ol>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-script" aria-labelledby="tab-script" hidden>
+            <h3 class="panel-title">Server script</h3>
+            <div class="get">
+              <a class="btn btn-download" href="downloads/php2shell-server-check.sh" download aria-label="Download php2shell-server-check.sh" title="Download"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>php2shell-server-check.sh</a>
+            </div>
+            <p class="or">or fetch it on the server</p>
+            <div class="cmdline"><code class="cmd" data-download="php2shell-server-check.sh" data-then="sha256sum php2shell-server-check.sh">curl -fsSLO https://sqzer-x.github.io/php2shell-scanner/downloads/php2shell-server-check.sh &amp;&amp; sha256sum php2shell-server-check.sh</code><button class="copy" type="button" aria-label="Copy command"><svg class="i-copy" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+            <p class="sha" data-sha-for="php2shell-server-check.sh"></p>
+            <p class="or">read it, then run it</p>
+            <div class="cmdline"><code class="cmd">sudo sh php2shell-server-check.sh --logs</code><button class="copy" type="button" aria-label="Copy command"><svg class="i-copy" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+            <ol class="howto">
+              <li>POSIX sh, read-only, no network access. Compare the printed hash with the one shown above (also in <a href="downloads/SHA256SUMS">SHA256SUMS</a>) and read the script before you run it.</li>
+              <li>Reports installed PHP packages and the CVE entries in their changelogs, and PHP processes still mapped to files replaced by an update.</li>
+              <li><code class="lit">--logs</code> scans web server, PHP-FPM and kernel logs for indicators; <code class="lit">--webroot DIR</code> lists PHP files changed in the last 3 days.</li>
+              <li>Run as root to inspect processes owned by other accounts.</li>
+            </ol>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-header" aria-labelledby="tab-header" hidden>
+            <h3 class="panel-title">Response header</h3>
+            <div class="cmdline"><code class="cmd">curl -sI https://&lt;site&gt;/ | grep -i x-powered-by</code><button class="copy" type="button" aria-label="Copy command"><svg class="i-copy" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+            <ol class="howto">
+              <li>Use only when you have no access to the server.</li>
+              <li>Works only if the header is exposed, and describes only the PHP behind that URL.</li>
+              <li>Debian and Ubuntu package revisions in the header are still recognised. Settings, other vhosts and restarts are not visible.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <form class="step" id="check-form" novalidate>
+        <div class="step-head-row">
+          <h2 class="step-head"><span class="step-n">2</span><label for="input">Paste output</label></h2>
+          <div class="examples">
+            <select id="example" class="select-sm" aria-label="Example input">
+              <option value="">Choose an example</option>
+              <option value="backport">Ubuntu 22.04, backported fix</option>
+              <option value="restart">Ubuntu 22.04, not restarted</option>
+              <option value="docker">Official Docker image, old tag</option>
+              <option value="rhel">AlmaLinux 9, server script</option>
+            </select>
+            <button type="button" id="load-example" class="btn btn-sm">Load</button>
+          </div>
+        </div>
+        <textarea id="input" rows="12" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Probe output (-----BEGIN PHP2SHELL SELFCHECK-----), server script output (-----BEGIN PHP2SHELL SERVERCHECK-----), both, an X-Powered-By header or a version string."></textarea>
+        <div class="form-row">
+          <label class="field">
+            <span>Distribution</span>
+            <select id="distro"><option value="auto">Auto-detect</option></select>
+          </label>
+          <div class="form-buttons">
+            <button type="button" id="clear" class="btn">Clear</button>
+            <button type="submit" class="btn btn-primary">Run check</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="pane pane-result" aria-labelledby="result-title">
+      <div class="step-head-row">
+        <h2 class="step-head" id="result-title"><span class="step-n">3</span>Result</h2>
+        <button type="button" class="btn btn-sm" id="copy-report" hidden>Copy report</button>
+      </div>
+      <noscript><p class="noscript">The check runs as JavaScript in your browser. Enable JavaScript, or apply the rules in the <a href="https://github.com/sqzer-x/php2shell-scanner#readme">README</a> by hand.</p></noscript>
+      <div id="result">
+        <div class="empty">
+          <p>No result yet. Collect facts on the server, paste the output and run the check.</p>
+          <table class="legend">
+            <caption class="sr-only">Possible verdicts</caption>
+            <tbody>
+              <tr><th scope="row"><span class="badge badge-patched">Patched</span></th><td>At or above the upstream fixed release, or a distribution package carrying both fixes.</td></tr>
+              <tr><th scope="row"><span class="badge badge-vulnerable">Vulnerable</span></th><td>Below the fixed release, including upstream builds of end-of-life branches.</td></tr>
+              <tr><th scope="row"><span class="badge badge-pending">Fix pending</span></th><td>The distribution tracks the CVEs but has not shipped a fixed package.</td></tr>
+              <tr><th scope="row"><span class="badge badge-restart">Restart needed</span></th><td>The fixed package is installed; the running PHP is still the old build.</td></tr>
+              <tr><th scope="row"><span class="badge badge-unknown">Undetermined</span></th><td>Not enough evidence. Never reported as safe.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="reference" aria-labelledby="ref-title">
+    <div class="reference-in">
+      <div class="ref-col">
+        <h2 id="ref-title">Affected releases</h2>
+        <noscript><p class="noscript">The release and package tables need JavaScript. Enable it, or read the data in <a href="data/upstream.json">upstream.json</a> and <a href="data/distro.json">distro.json</a> directly.</p></noscript>
+        <table class="data" id="upstream-table">
+          <thead><tr><th scope="col">Branch</th><th scope="col">Affected</th><th scope="col">Fixed</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <details class="disclosure">
+          <summary>Distribution packages</summary>
+          <table class="data" id="distro-table">
+            <thead><tr><th scope="col">Distribution</th><th scope="col">Source package</th><th scope="col">Fixed in</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </details>
+        <details class="disclosure">
+          <summary>Red Hat advisories</summary>
+          <div id="redhat-list"></div>
+        </details>
+        <p class="fine" id="data-status"></p>
+      </div>
+
+      <div class="ref-col">
+        <h2>Method</h2>
+        <ol class="method">
+          <li>A version at or above the upstream fixed release for its branch is patched.</li>
+          <li>Debian and Ubuntu packages are compared with the distribution's fixed version using dpkg ordering.</li>
+          <li>On the RHEL family the evidence is the CVE entries in the package changelog, collected by the server script.</li>
+          <li>A running version older than the installed package, or a PHP process mapping a deleted file, means restart needed.</li>
+          <li>deb.sury.org builds, official Docker images and self-built PHP are judged against upstream releases.</li>
+          <li>Interim mitigations are reported but never change a verdict.</li>
+          <li>Missing evidence gives Undetermined, never safe.</li>
+        </ol>
+        <h2>Scope</h2>
+        <p class="fine-block">No request is sent to your server. The probe reads versions, packages and settings. The server script also reads package changelogs, the process list with command lines, the files each PHP process has mapped and PHP and web server configuration files. With <code class="lit">--logs</code> and <code class="lit">--webroot</code> it also reads logs, session file sizes and the names and dates of PHP files. Its terminal output can show command lines and log lines; the page needs only the block between the BEGIN and END lines.</p>
+        <p class="fine-block">A verdict is not proof that an attack would fail. Read the upstream advisories and your distribution's notices as well.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>php2shell-scanner · MIT · <a class="repo-link" href="https://github.com/sqzer-x/php2shell-scanner">Source</a> · <a href="data/distro.json">distro.json</a> · <a href="data/upstream.json">upstream.json</a> · <a href="downloads/SHA256SUMS">SHA256SUMS</a> · by <a href="https://sqzer.com">Hyukjin An</a></p>
+  </footer>
+</body>
+</html>

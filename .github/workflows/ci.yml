@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every Node.js line that package.json "engines" allows and that is still in use.
+        # pages.yml runs the same `npm test` on 22 before it deploys.
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck (POSIX sh)
+        run: shellcheck -s sh scripts/php2shell-server-check.sh
+      - name: Run on runner
+        run: sh scripts/php2shell-server-check.sh --logs
+
+  php-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['5.6', '7.4', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - name: php -l on PHP ${{ matrix.php }}
+        run: docker run --rm -v "$PWD/check:/check:ro" php:${{ matrix.php }}-cli php -l /check/php2shell-selfcheck.php

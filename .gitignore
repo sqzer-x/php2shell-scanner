@@ -1,0 +1,10 @@
+# Installed or generated locally
+node_modules/
+_site/
+site/data/status.json
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini

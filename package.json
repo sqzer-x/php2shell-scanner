@@ -1,0 +1,17 @@
+{
+  "name": "php2shell-scanner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Check PHP2Shell (CVE-2026-109618, CVE-2026-109619) from inside your server; verdicts are computed in the browser.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "update-data": "node tools/update-distro-data.mjs",
+    "build": "node tools/build-site.mjs",
+    "serve": "node tools/build-site.mjs && node tools/serve.mjs"
+  }
+}

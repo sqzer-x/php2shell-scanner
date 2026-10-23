@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "updated": "2026-10-23",
+  "released": "2026-10-21",
+  "cves": [
+    {
+      "id": "CVE-2026-109618",
+      "ghsa": "GHSA-w8hw-w9fx-j79w",
+      "title": "OOM handling leaves request memory corrupted",
+      "cvss4": 9.2,
+      "url": "https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w"
+    },
+    {
+      "id": "CVE-2026-109619",
+      "ghsa": "GHSA-6wmf-4rv5-p3rp",
+      "title": "Freed global state reused (use-after-free)",
+      "cvss4": 9.2,
+      "url": "https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp"
+    }
+  ],
+  "fixed": {
+    "8.2": "8.2.35",
+    "8.3": "8.3.36",
+    "8.4": "8.4.27",
+    "8.5": "8.5.12"
+  },
+  "eol": {
+    "8.2": "2026-12-31"
+  },
+  "backport_branches": {
+    "7.4": "PHP-7.4-CVE-2026-109618-109619",
+    "8.0": "PHP-8.0-CVE-2026-109618-109619",
+    "8.1": "PHP-8.1-CVE-2026-109618-109619"
+  }
+}
