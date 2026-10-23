@@ -2,7 +2,7 @@
 
 PHP2Shell Scanner tells you whether the PHP on your server is affected by PHP2Shell (CVE-2026-109618 and CVE-2026-109619), two unauthenticated remote code execution flaws in the PHP engine. It collects facts on the server itself, with a PHP probe and a POSIX shell script, and a static page computes the verdict entirely in your browser. It understands distribution backports, notices when PHP was patched but not restarted, and reports interim mitigations.
 
-- **Check page:** <https://sqzer-x.github.io/php2shell-scanner/> (Korean: <https://sqzer-x.github.io/php2shell-scanner/kr/>)
+- **Check page:** <https://php2shell.sqzer.com/> (Korean: <https://php2shell.sqzer.com/kr/>)
 - **Advisories:** [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w) (CVE-2026-109618, memory corruption during out-of-memory handling) and [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp) (CVE-2026-109619, use-after-free of global state)
 - **Fixed upstream in:** 8.2.35, 8.3.36, 8.4.27, 8.5.12
 

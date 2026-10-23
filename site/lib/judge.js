@@ -1212,7 +1212,7 @@ const PROBE_DPKG_MAX = 40;
 // Where the page publishes the probe and the server script (the download lines on its tabs).
 // The published download location. The page swaps it for its own address, so a
 // self-hosted copy points at its own downloads/.
-export const DEFAULT_DOWNLOADS = 'https://sqzer-x.github.io/php2shell-scanner/downloads/';
+export const DEFAULT_DOWNLOADS = 'https://php2shell.sqzer.com/downloads/';
 const DOWNLOADS = DEFAULT_DOWNLOADS;
 const FETCH_SCRIPT = `curl -fsSLO ${DOWNLOADS}php2shell-server-check.sh\nsha256sum php2shell-server-check.sh`;
 const RHEL_NAMES = {

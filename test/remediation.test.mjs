@@ -25,8 +25,8 @@ const CVES = 'CVE-2026-109618 --cve CVE-2026-109619';
 const GREP = 'grep -e CVE-2026-109618 -e CVE-2026-109619';
 const MODULE = '8.2.13-1.module+el9.4.0+20827+3f2b0b48';
 // The download lines of the page's Server script and PHP probe tabs.
-const FETCH = 'curl -fsSLO https://sqzer-x.github.io/php2shell-scanner/downloads/php2shell-server-check.sh\nsha256sum php2shell-server-check.sh';
-const PROBE = "curl -fsSLO https://sqzer-x.github.io/php2shell-scanner/downloads/php2shell-selfcheck.php\ncurl -s 'https://<site>/<file>.php?k=<TOKEN>'";
+const FETCH = 'curl -fsSLO https://php2shell.sqzer.com/downloads/php2shell-server-check.sh\nsha256sum php2shell-server-check.sh';
+const PROBE = "curl -fsSLO https://php2shell.sqzer.com/downloads/php2shell-selfcheck.php\ncurl -s 'https://<site>/<file>.php?k=<TOKEN>'";
 
 // Every fixture used below, with the verdict it must keep: the remediation work changes no verdict.
 const F = {
