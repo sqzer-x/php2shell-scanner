@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-23T00:52:34.437Z",
+  "updated_at": "2026-10-23T17:13:17.861Z",
   "debian": {
     "12": {
       "codename": "bookworm",
@@ -30,8 +30,8 @@
       "packages": {
         "php8.4": {
           "fixed": {
-            "CVE-2026-109618": null,
-            "CVE-2026-109619": null
+            "CVE-2026-109618": "8.4.27-1",
+            "CVE-2026-109619": "8.4.27-1"
           },
           "pro": false
         }
@@ -45,12 +45,12 @@
         {
           "cve": "CVE-2026-109618",
           "package": "php",
-          "state": "Under investigation"
+          "state": "Out of support scope"
         },
         {
           "cve": "CVE-2026-109619",
           "package": "php",
-          "state": "Not affected"
+          "state": "Out of support scope"
         }
       ]
     },
@@ -60,12 +60,12 @@
         {
           "cve": "CVE-2026-109618",
           "package": "php",
-          "state": "Under investigation"
+          "state": "Not affected"
         },
         {
           "cve": "CVE-2026-109619",
           "package": "php",
-          "state": "Not affected"
+          "state": "Affected"
         }
       ]
     },
