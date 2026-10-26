@@ -4,6 +4,9 @@ _site/
 site/data/status.json
 npm-debug.log*
 
+# Private working documents (command log, notes); never published
+docs/
+
 # Operating system files
 .DS_Store
 Thumbs.db
