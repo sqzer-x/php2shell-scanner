@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-23T17:13:17.861Z",
+  "updated_at": "2026-10-26T00:18:42.136Z",
   "debian": {
     "12": {
       "codename": "bookworm",
@@ -61,11 +61,6 @@
           "cve": "CVE-2026-109618",
           "package": "php",
           "state": "Not affected"
-        },
-        {
-          "cve": "CVE-2026-109619",
-          "package": "php",
-          "state": "Affected"
         }
       ]
     },
