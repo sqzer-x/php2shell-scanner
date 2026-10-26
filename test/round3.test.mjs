@@ -1,7 +1,8 @@
 // Regression tests for the third round of tester reports, and for the engine notes of the same round. Each test
-// replays the tester's input (real probe and server script outputs where the tester had them) against the real
-// data files in site/data/. Groups: D (Debian and Ubuntu), R (RHEL family and Docker), C (crafted inputs),
-// X (rendering and robustness), N (notes from the server script and probe work).
+// replays the tester's input (real probe and server script outputs where the tester had them) against
+// upstream.json and a frozen copy of distro.json (fixtures/distro-snapshot.json), so data refreshes do not move the
+// verdicts. Groups: D (Debian and Ubuntu), R (RHEL family and Docker), C (crafted inputs), X (rendering and
+// robustness), N (notes from the server script and probe work).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -9,7 +10,7 @@ import { parseInput } from '../site/lib/parse.js';
 import { judge, sapiLabel } from '../site/lib/judge.js';
 
 const upstream = JSON.parse(readFileSync(new URL('../site/data/upstream.json', import.meta.url), 'utf8'));
-const distro = JSON.parse(readFileSync(new URL('../site/data/distro.json', import.meta.url), 'utf8'));
+const distro = JSON.parse(readFileSync(new URL('./fixtures/distro-snapshot.json', import.meta.url), 'utf8'));
 
 // A probe block as the probe prints it (the fields in the probe's own order).
 const probe = (fields) => `-----BEGIN PHP2SHELL SELFCHECK-----\n${JSON.stringify({ tool: 'php2shell-selfcheck', tool_version: '1.0.0', schema: 1, ...fields })}\n-----END PHP2SHELL SELFCHECK-----\n`;

@@ -1,5 +1,6 @@
 // Regression tests for the verdict-engine review findings. Each test reproduces the
-// reviewer's scenario against the real data files in site/data/.
+// reviewer's scenario against site/data/upstream.json and a frozen copy of site/data/distro.json
+// (fixtures/distro-snapshot.json), so data refreshes do not move the verdicts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -9,7 +10,7 @@ import { parsePhpVersion } from '../site/lib/version.js';
 import { MESSAGES } from '../site/lib/messages.js';
 
 const upstream = JSON.parse(readFileSync(new URL('../site/data/upstream.json', import.meta.url), 'utf8'));
-const distro = JSON.parse(readFileSync(new URL('../site/data/distro.json', import.meta.url), 'utf8'));
+const distro = JSON.parse(readFileSync(new URL('./fixtures/distro-snapshot.json', import.meta.url), 'utf8'));
 
 function selfcheck(fields) {
   const report = {

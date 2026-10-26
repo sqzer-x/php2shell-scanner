@@ -53,6 +53,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # The verdict tests above use a frozen copy of the data; this checks the data just fetched before it is
+      # deployed or committed.
+      - name: Check the fetched data
+        run: node --test test/data.test.mjs
+
       - name: Assemble site
         run: node tools/build-site.mjs
 

@@ -1,6 +1,7 @@
 // Remediation steps (r.actions): for each kind of result, the steps name what runs now, the release or package that
 // fixes it, the exact commands built from the observation (package names, image tag, service names) and how to
-// confirm the fix, in English and Korean. Real data files in site/data/.
+// confirm the fix, in English and Korean. Runs against site/data/upstream.json and a frozen copy of
+// site/data/distro.json (fixtures/distro-snapshot.json), so data refreshes do not move the verdicts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -8,7 +9,7 @@ import { parseInput } from '../site/lib/parse.js';
 import { judge } from '../site/lib/judge.js';
 
 const upstream = JSON.parse(readFileSync(new URL('../site/data/upstream.json', import.meta.url), 'utf8'));
-const distro = JSON.parse(readFileSync(new URL('../site/data/distro.json', import.meta.url), 'utf8'));
+const distro = JSON.parse(readFileSync(new URL('./fixtures/distro-snapshot.json', import.meta.url), 'utf8'));
 
 const probe = (fields) => `-----BEGIN PHP2SHELL SELFCHECK-----\n${JSON.stringify({ tool: 'php2shell-selfcheck', tool_version: '1.0.0', schema: 1, ...fields })}\n-----END PHP2SHELL SELFCHECK-----\n`;
 const server = (lines, closed = true) => `-----BEGIN PHP2SHELL SERVERCHECK-----\n${['tool|php2shell-server-check|1.0.0', ...lines].join('\n')}\n${closed ? '-----END PHP2SHELL SERVERCHECK-----\n' : ''}`;

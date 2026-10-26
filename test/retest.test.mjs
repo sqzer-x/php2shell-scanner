@@ -1,5 +1,6 @@
-// Regression tests for the second round of tester reports. Each test replays the tester's input against the
-// real data files in site/data/. Numbers follow the report: tester 1 #1-#12, tester 2 #13-#30.
+// Regression tests for the second round of tester reports. Each test replays the tester's input against
+// upstream.json and a frozen copy of distro.json (fixtures/distro-snapshot.json), so data refreshes do not move the
+// verdicts. Numbers follow the report: tester 1 #1-#12, tester 2 #13-#30.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -8,7 +9,7 @@ import { judge } from '../site/lib/judge.js';
 import { parsePhpVersion } from '../site/lib/version.js';
 
 const upstream = JSON.parse(readFileSync(new URL('../site/data/upstream.json', import.meta.url), 'utf8'));
-const distro = JSON.parse(readFileSync(new URL('../site/data/distro.json', import.meta.url), 'utf8'));
+const distro = JSON.parse(readFileSync(new URL('./fixtures/distro-snapshot.json', import.meta.url), 'utf8'));
 
 const probe = (fields) => `-----BEGIN PHP2SHELL SELFCHECK-----\n${JSON.stringify({ tool: 'php2shell-selfcheck', schema: 1, ...fields })}\n-----END PHP2SHELL SELFCHECK-----\n`;
 const server = (lines, closed = true) => `-----BEGIN PHP2SHELL SERVERCHECK-----\n${lines.join('\n')}\n${closed ? '-----END PHP2SHELL SERVERCHECK-----\n' : ''}`;

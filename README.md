@@ -183,6 +183,8 @@ npm run serve         # build, then serve _site/ at http://127.0.0.1:8790
 
 `npm test` runs `node --test` with no arguments, so Node.js finds `test/*.test.mjs` with its default patterns on every supported version. CI runs it on Node.js 20, 22 and 24, and the deploy workflow runs the same command before it deploys.
 
+The verdict and remediation tests read a frozen copy of the distribution data, [`test/fixtures/distro-snapshot.json`](test/fixtures/distro-snapshot.json), so a scheduled data refresh never changes an expected verdict. [`test/data.test.mjs`](test/data.test.mjs) checks the live `site/data/distro.json` instead: its shape, and that the engine reads every release in it. The deploy workflow runs that file again on the freshly fetched data before it deploys or commits it. When an engine change needs newer advisories in the tests, replace the snapshot with the current `site/data/distro.json` and update the expected verdicts in the same commit.
+
 `npm run update-data` uses `GITHUB_TOKEN` from the environment if set, which avoids GitHub API rate limits. [`tools/build-site.mjs`](tools/build-site.mjs) copies `site/`, adds both server-side files under `downloads/` with a `SHA256SUMS` file, and writes `config.json`. The deploy workflow runs the same script, so a local preview matches production.
 
 [`tools/serve.mjs`](tools/serve.mjs) is a small static file server with no dependencies. It listens on `127.0.0.1` only, serves `_site/` and nothing outside it, and sends `.php` and `.sh` files as plain text. Set `PORT` to use a port other than 8790.

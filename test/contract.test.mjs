@@ -1,6 +1,7 @@
 // Regression tests for the engine side of the server script, PHP probe and page contract: what the script and the
 // probe now emit (env|root, changelog lines, unknown counts, os_release null, open_basedir, the legacy release keys)
-// and what the page reads from a result (r.family, string facts and advisories). Real data files in site/data/.
+// and what the page reads from a result (r.family, string facts and advisories). Runs against site/data/upstream.json
+// and a frozen copy of site/data/distro.json (fixtures/distro-snapshot.json), so data refreshes do not move the verdicts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -8,7 +9,7 @@ import { parseInput } from '../site/lib/parse.js';
 import { judge, sapiExposure } from '../site/lib/judge.js';
 
 const upstream = JSON.parse(readFileSync(new URL('../site/data/upstream.json', import.meta.url), 'utf8'));
-const distro = JSON.parse(readFileSync(new URL('../site/data/distro.json', import.meta.url), 'utf8'));
+const distro = JSON.parse(readFileSync(new URL('./fixtures/distro-snapshot.json', import.meta.url), 'utf8'));
 
 const probe = (fields) => `-----BEGIN PHP2SHELL SELFCHECK-----\n${JSON.stringify({ tool: 'php2shell-selfcheck', tool_version: '1.0.0', schema: 1, ...fields })}\n-----END PHP2SHELL SELFCHECK-----\n`;
 const server = (lines) => `-----BEGIN PHP2SHELL SERVERCHECK-----\n${['tool|php2shell-server-check|1.0.0', ...lines].join('\n')}\n-----END PHP2SHELL SERVERCHECK-----\n`;
